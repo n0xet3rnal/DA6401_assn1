@@ -1,0 +1,65 @@
+# sweep_config.yaml – W&B Bayesian Hyperparameter Sweep
+#
+# Launch the sweep to get a Sweep ID:
+#   wandb sweep sweep_config.yaml
+#
+# Start an agent to execute the sweep:
+#   wandb agent <USERNAME>/<PROJECT>/<SWEEP_ID>
+#
+
+program: src/train.py
+method: bayes          # Bayesian optimisation for efficient exploration
+command:
+  - ${env}
+  - python
+  - ${program}
+  - ${args}
+
+metric:
+  name: val_accuracy   # The key 'val_accuracy' is logged per epoch in train.py
+  goal: maximize
+
+run_cap: 100           # At least 100 runs
+
+parameters:
+  # Optimizer
+  optimizer:
+    values: [sgd, momentum, nag, rmsprop, adam, nadam]
+
+  # Learning rate — log-uniform over a wide range
+  learning_rate:
+    distribution: log_uniform_values
+    min: 0.0001
+    max: 0.1
+
+  # Batch size
+  batch_size:
+    values: [32, 64, 128, 256]
+
+  # Architecture — number of hidden layers
+  num_layers:
+    values: [1, 2, 3, 4]
+
+  # Hidden layer width (passed as a single value parsed by nargs="+")
+  hidden_size:
+    values: [32, 64, 128]
+
+  # Activation function
+  activation:
+    values: [sigmoid, tanh, relu]
+
+  # Weight initialisation
+  weight_init:
+    values: [random, xavier]
+
+  # Regularisation
+  weight_decay:
+    values: [0.0, 0.0001, 0.001, 0.01]
+
+  # Loss function
+  loss:
+    values: [cross_entropy, mse]
+
+  # Fixed epochs per sweep run (short but enough to compare)
+  epochs:
+    value: 20
