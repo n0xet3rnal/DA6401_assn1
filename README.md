@@ -1,6 +1,6 @@
 # DA6401 Assignment 1 – NumPy MLP
 
-A fully configurable, modular **Multi-Layer Perceptron** built with **NumPy only** for image classification on MNIST and Fashion-MNIST.
+A fully configurable, modular **Multi-Layer Perceptron (MLP)** built entirely from scratch using **only NumPy**. This project is designed for image classification tasks on the **MNIST** and **Fashion-MNIST** datasets. It features a highly modular object-oriented design, allowing you to easily swap out loss functions, optimizers, activation functions, and network architectures.
 
 ## Project Structure
 
@@ -16,59 +16,79 @@ A fully configurable, modular **Multi-Layer Perceptron** built with **NumPy only
 │   └── optimizers.py         # SGD, Momentum, NAG, RMSProp, Adam, Nadam
 ├── src/
 │   ├── utils/
-│   │   ├── data_loader.py        # load_data, preprocess, one_hot
-│   │   ├── metrics.py            # accuracy, precision, recall, F1
-│   │   └── visualize.py          # confusion matrix, W&B image table
+│   │   ├── data_loader.py        # Dataset fetching, preprocessing, and one-hot encoding
+│   │   ├── metrics.py            # Accuracy, Precision, Recall, F1-Score
+│   │   └── visualize.py          # Plotting utilities and confusion matrices
 │   ├── train.py                  # CLI training script
-│   └── inference.py              # CLI inference + metrics script
-├── requirements.txt
+│   └── inference.py              # CLI evaluation and inference script
+├── requirements.txt        # Required Python packages
 └── README.md
 ```
 
 ## Quick Start
 
-### 1. Install dependencies
+### 1. Install Dependencies
+Make sure you have Python installed. Then, install the required packages:
 ```bash
 pip install -r requirements.txt
 ```
 
-### 2. Train
+### 2. Train a Model
+Run the `train.py` script from the project root. The script will automatically download the dataset (if not present), train the model, log metrics to W&B, and save the best checkpoint.
+
 ```bash
-# From project root
+# Example: Train a 3-layer MLP on MNIST with Adam, ReLU, and Cross-Entropy
 python src/train.py -d mnist -e 10 -b 32 -l cross_entropy \
                    -o adam -lr 0.001 -wd 0.0 \
                    -nhl 3 -sz 128 -a relu -w_i xavier
 ```
 
-### 3. Inference
+### 3. Run Inference
+Evaluate your saved model on the test set and optionally generate a confusion matrix.
 ```bash
 python src/inference.py --model src/best_model.npy \
                         --config src/best_config.json \
                         --dataset mnist --plot_cm
 ```
 
-## CLI Arguments
+## 🛠 Command-Line Interface (CLI) Arguments
 
-| Flag | Long | Description | Default |
-|------|------|-------------|---------|
-| `-d` | `--dataset` | `mnist` or `fashion_mnist` | `mnist` |
-| `-e` | `--epochs` | Training epochs | `10` |
-| `-b` | `--batch_size` | Mini-batch size | `32` |
-| `-l` | `--loss` | `cross_entropy` or `mse` | `cross_entropy` |
-| `-o` | `--optimizer` | `sgd`, `momentum`, `nag`, `rmsprop`, `adam`, `nadam` | `adam` |
-| `-lr` | `--learning_rate` | Learning rate | `0.001` |
-| `-wd` | `--weight_decay` | L2 regularisation | `0.0` |
-| `-nhl` | `--num_layers` | Number of hidden layers | `3` |
-| `-sz` | `--hidden_size` | Neurons per hidden layer | `128` |
-| `-a` | `--activation` | `sigmoid`, `tanh`, `relu` | `relu` |
-| `-w_i` | `--weight_init` | `random`, `xavier` | `xavier` |
+The `train.py` script accepts the following parameters to fully customize your model:
 
-## Outputs
+| Flag | Long Argument | Description | Default |
+|------|---------------|-------------|---------|
+| `-d` | `--dataset` | Choose between `mnist` or `fashion_mnist` | `mnist` |
+| `-e` | `--epochs` | Number of training epochs | `10` |
+| `-b` | `--batch_size` | Mini-batch size for training | `32` |
+| `-l` | `--loss` | Loss function: `cross_entropy` or `mse` | `cross_entropy` |
+| `-o` | `--optimizer` | Optimization algorithm: `sgd`, `momentum`, `nag`, `rmsprop`, `adam`, `nadam` | `adam` |
+| `-lr` | `--learning_rate` | Initial learning rate | `0.001` |
+| `-wd` | `--weight_decay` | L2 weight decay (regularization) factor | `0.0` |
+| `-nhl` | `--num_layers` | Number of hidden layers in the network | `3` |
+| `-sz` | `--hidden_size` | Number of neurons per hidden layer | `128` |
+| `-a` | `--activation` | Hidden layer activation: `sigmoid`, `tanh`, `relu` | `relu` |
+| `-w_i` | `--weight_init` | Weight initialization strategy: `random`, `xavier` | `xavier` |
 
-Standard training generates:
-- `src/best_model.npy` — serialised weights (best val accuracy)
-- `src/best_config.json` — matching hyperparameter config
-- `models/` (if specified via `--save_path` and `--config_path` in arguments) 
+*Note: W&B logging can be disabled by passing the `--no_wandb` flag.*
 
-## WandB Report
-[Report Link](https://wandb.ai/be22b022-indian-institute-of-technology-madras/da6401_assignment1/reports/DA6401-Assignment-1-BE22B022--VmlldzoxNjA1MTgwNg?accessToken=toja56uklr2mc9mpz97ehsxeqb422384631ril6cacdajnz0qy36lezc6d5znc46)
+##  Hyperparameter Sweeps (Weights & Biases)
+
+This project supports **Bayesian Hyperparameter Sweeps** via W&B to automatically find the best network configuration.
+
+1. **Initialize the Sweep:**
+```bash
+wandb sweep sweep_config.yaml
+```
+2. **Start the Agent:** W&B will output a sweep ID. Run the following command to start searching:
+```bash
+wandb agent <USERNAME>/<PROJECT>/<SWEEP_ID>
+```
+
+##  Outputs & Checkpoints
+
+By default, standard training generates the following files in the `src/` directory (or wherever specified via `--save_path`):
+- `best_model.npy`: Serialized NumPy arrays containing the network weights and biases that achieved the highest validation accuracy.
+- `best_config.json`: The hyperparameter configuration used to train the best model.
+
+##  W&B Report Summary
+[View Full W&B Project Report](https://wandb.ai/be22b022-indian-institute-of-technology-madras/da6401_assignment1/reports/DA6401-Assignment-1-BE22B022--VmlldzoxNjA1MTgwNg?accessToken=toja56uklr2mc9mpz97ehsxeqb422384631ril6cacdajnz0qy36lezc6d5znc46)
