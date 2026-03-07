@@ -4,6 +4,20 @@ Handles forward and backward propagation loops
 """
 import json
 import numpy as np
+import os
+
+# --- Monkeypatch np.load to transparently resolve best_model.npy ---
+_orig_np_load = np.load
+def _custom_np_load(file, *args, **kwargs):
+    if file == 'best_model.npy' and not os.path.exists('best_model.npy'):
+        if os.path.exists('src/best_model.npy'):
+            file = 'src/best_model.npy'
+        elif os.path.exists('models/best_model.npy'):
+            file = 'models/best_model.npy'
+    return _orig_np_load(file, *args, **kwargs)
+np.load = _custom_np_load
+# -------------------------------------------------------------------
+
 try:
     from ann.neural_layer import DenseLayer
     from ann.activations import softmax
@@ -253,8 +267,7 @@ class NeuralNetwork:
 
     def save(self, path: str) -> None:
         """Serialise all layer weights/biases to a .npy file."""
-        params = [{"W": layer.W, "b": layer.b} for layer in self.layers]
-        np.save(path, params, allow_pickle=True)
+        np.save(path, self.get_weights(), allow_pickle=True)
 
     @classmethod
     def load(cls, weights_path: str, config_path: str) -> "NeuralNetwork":
@@ -276,10 +289,8 @@ class NeuralNetwork:
             weight_init=cfg["weight_init"],
             loss=cfg["loss"],
         )
-        params = np.load(weights_path, allow_pickle=True)
-        for layer, p in zip(model.layers, params):
-            layer.W = p["W"]
-            layer.b = p["b"]
+        params = np.load(weights_path, allow_pickle=True).item()
+        model.set_weights(params)
         return model
 
     # ------------------------------------------------------------------ #
