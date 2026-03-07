@@ -8,13 +8,13 @@ A fully configurable, modular **Multi-Layer Perceptron** built with **NumPy only
 ├── models/                 # Saved weights & configs
 ├── notebooks/              # W&B demo notebook
 ├── sweep_config.yaml       # W&B Sweep configuration
+├── ann/
+│   ├── activations.py        # sigmoid, tanh, relu, softmax
+│   ├── neural_layer.py       # DenseLayer (forward/backward, grad_W, grad_b)
+│   ├── neural_network.py     # NeuralNetwork class (forward/backward/predict/save/load)
+│   ├── objective_functions.py# cross_entropy & mse losses + gradients
+│   └── optimizers.py         # SGD, Momentum, NAG, RMSProp, Adam, Nadam
 ├── src/
-│   ├── ann/
-│   │   ├── activations.py        # sigmoid, tanh, relu, softmax
-│   │   ├── neural_layer.py       # DenseLayer (forward/backward, grad_W, grad_b)
-│   │   ├── neural_network.py     # NeuralNetwork class (forward/backward/predict/save/load)
-│   │   ├── objective_functions.py# cross_entropy & mse losses + gradients
-│   │   └── optimizers.py         # SGD, Momentum, NAG, RMSProp, Adam, Nadam
 │   ├── utils/
 │   │   ├── data_loader.py        # load_data, preprocess, one_hot
 │   │   ├── metrics.py            # accuracy, precision, recall, F1

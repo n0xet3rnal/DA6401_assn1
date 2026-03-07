@@ -12,7 +12,10 @@ import matplotlib
 matplotlib.use("Agg")
 
 # Allow running as: python src/inference.py or python inference.py
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+src_dir = os.path.dirname(os.path.abspath(__file__))
+project_dir = os.path.dirname(src_dir)
+sys.path.insert(0, src_dir)
+sys.path.insert(0, project_dir)
 
 from ann.neural_network import NeuralNetwork
 from utils.data_loader import load_data
