@@ -46,21 +46,26 @@ class NeuralNetwork:
             weight_init  : 'random' | 'xavier'
             loss         : 'cross_entropy' | 'mse'
         """
-        if cli_args is not None and hasattr(cli_args, "num_layers"):
+        if cli_args is not None and getattr(cli_args, "hidden_size", None) is not None:
             # Build from argparse namespace produced by train.py
-            n_hidden    = cli_args.num_layers
-            hidden_size = cli_args.hidden_size   # list
-            activation  = cli_args.activation    # single str
-            weight_init = cli_args.weight_init
-            loss        = cli_args.loss
+            n_hidden    = getattr(cli_args, "num_layers", 1)
+            hidden_size = getattr(cli_args, "hidden_size", [128])   # list
+            activation  = getattr(cli_args, "activation", "relu")    # single str
+            weight_init = getattr(cli_args, "weight_init", "xavier")
+            loss        = getattr(cli_args, "loss", "cross_entropy")
             input_dim   = getattr(cli_args, "input_dim", 784)
             n_classes   = getattr(cli_args, "n_classes",  10)
 
-            if len(hidden_size) == 1:
+            if hidden_size is None:
+                sizes = []
+            elif isinstance(hidden_size, int):
+                sizes = [hidden_size] * n_hidden
+            elif len(hidden_size) == 1:
                 sizes = [hidden_size[0]] * n_hidden
             elif len(hidden_size) == n_hidden:
                 sizes = list(hidden_size)
             else:
+                sizes = list(hidden_size)
                 raise ValueError(
                     f"--hidden_size must have 1 value or exactly {n_hidden}, "
                     f"got {len(hidden_size)}."
@@ -70,11 +75,14 @@ class NeuralNetwork:
             activations = [activation] * n_hidden
         else:
             # Direct construction (used by verify.py / tests)
-            layer_sizes = kwargs.get("layer_sizes")
+            layer_sizes = kwargs.get("layer_sizes", [784, 128, 10])
             activations = kwargs.get("activations", None)
             weight_init = kwargs.get("weight_init", "xavier")
             loss        = kwargs.get("loss", "cross_entropy")
 
+        if layer_sizes is None:
+            layer_sizes = [784, 128, 10]
+            
         n_hidden = len(layer_sizes) - 2
 
         # Normalise activations

@@ -24,25 +24,45 @@ def load_data(dataset_name: str):
             f"Unknown dataset '{dataset_name}'. Choose from: {_DATASET_NAMES}"
         )
 
-    # Try keras, fall back to tensorflow.keras
-    try:
-        if dataset_name == "mnist":
-            from keras.datasets import mnist as ds          # type: ignore
-        else:
-            from keras.datasets import fashion_mnist as ds  # type: ignore
-    except ModuleNotFoundError:
-        try:
-            if dataset_name == "mnist":
-                from tensorflow.keras.datasets import mnist as ds          # type: ignore
-            else:
-                from tensorflow.keras.datasets import fashion_mnist as ds  # type: ignore
-        except ModuleNotFoundError:
-            raise ModuleNotFoundError(
-                "Could not import keras or tensorflow.keras. "
-                "Install with: pip install tensorflow-cpu  or  pip install keras tensorflow"
-            )
+    import os
+    import gzip
+    import urllib.request
+    
+    def download_and_extract(url, filepath):
+        if not os.path.exists(filepath):
+            print(f"Downloading {url} to {filepath}...")
+            urllib.request.urlretrieve(url, filepath)
+        with gzip.open(filepath, 'rb') as f:
+            return f.read()
 
-    (X_raw_train, y_train_all), (X_raw_test, y_test) = ds.load_data()
+    data_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'data', dataset_name)
+    os.makedirs(data_dir, exist_ok=True)
+
+    if dataset_name == "mnist":
+        base_url = "https://storage.googleapis.com/cvdf-datasets/mnist/"
+    else:
+        base_url = "http://fashion-mnist.s3-website.eu-central-1.amazonaws.com/"
+
+    files = [
+        "train-images-idx3-ubyte.gz",
+        "train-labels-idx1-ubyte.gz",
+        "t10k-images-idx3-ubyte.gz",
+        "t10k-labels-idx1-ubyte.gz"
+    ]
+
+    urls = [base_url + f for f in files]
+    filepaths = [os.path.join(data_dir, f) for f in files]
+
+    train_images_raw = download_and_extract(urls[0], filepaths[0])
+    train_labels_raw = download_and_extract(urls[1], filepaths[1])
+    test_images_raw = download_and_extract(urls[2], filepaths[2])
+    test_labels_raw = download_and_extract(urls[3], filepaths[3])
+
+    # Parse idx files
+    X_raw_train = np.frombuffer(train_images_raw, dtype=np.uint8, offset=16).reshape(-1, 28, 28)
+    y_train_all = np.frombuffer(train_labels_raw, dtype=np.uint8, offset=8)
+    X_raw_test = np.frombuffer(test_images_raw, dtype=np.uint8, offset=16).reshape(-1, 28, 28)
+    y_test = np.frombuffer(test_labels_raw, dtype=np.uint8, offset=8)
 
     X_all  = preprocess(X_raw_train)
     X_test = preprocess(X_raw_test)
