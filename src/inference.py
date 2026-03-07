@@ -8,8 +8,11 @@ import sys
 import argparse
 import numpy as np
 
-import matplotlib
-matplotlib.use("Agg")
+try:
+    import matplotlib
+    matplotlib.use("Agg")
+except ImportError:
+    pass
 
 # Allow running as: python src/inference.py or python inference.py
 src_dir = os.path.dirname(os.path.abspath(__file__))

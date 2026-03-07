@@ -9,8 +9,11 @@ import json
 import argparse
 import numpy as np
 
-import matplotlib
-matplotlib.use("Agg")
+try:
+    import matplotlib
+    matplotlib.use("Agg")
+except ImportError:
+    pass
 
 # Allow running as: python src/train.py or python train.py from the src/ dir
 src_dir = os.path.dirname(os.path.abspath(__file__))

@@ -3,9 +3,13 @@ Visualisation Utilities
 Confusion matrix plot and W&B sample image table
 """
 import numpy as np
-import matplotlib
-matplotlib.use("Agg")
-import matplotlib.pyplot as plt
+try:
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+    HAS_MATPLOTLIB = True
+except ImportError:
+    HAS_MATPLOTLIB = False
 
 
 def plot_confusion_matrix(
@@ -24,6 +28,10 @@ def plot_confusion_matrix(
     title      : plot title
     save_path  : if given, save the figure to this path (PNG, 150 dpi)
     """
+    if not HAS_MATPLOTLIB:
+        print("Warning: matplotlib not installed, skipping confusion matrix plot.")
+        return None
+
     fig, ax = plt.subplots(figsize=(10, 8))
     im = ax.imshow(cm, interpolation="nearest", cmap=plt.cm.Blues)
     plt.colorbar(im, ax=ax)

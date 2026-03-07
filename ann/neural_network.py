@@ -4,9 +4,15 @@ Handles forward and backward propagation loops
 """
 import json
 import numpy as np
-from .neural_layer import DenseLayer
-from .activations import softmax
-from .objective_functions import get_loss
+try:
+    from ann.neural_layer import DenseLayer
+    from ann.activations import softmax
+    from ann.objective_functions import get_loss
+except ImportError:
+    # Fallback for direct file execution by autograders
+    from neural_layer import DenseLayer
+    from activations import softmax
+    from objective_functions import get_loss
 
 
 class NeuralNetwork:

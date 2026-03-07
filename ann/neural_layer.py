@@ -3,7 +3,11 @@ Neural Layer Implementation
 Handles weight initialization, forward pass, and gradient computation
 """
 import numpy as np
-from .activations import get_activation
+try:
+    from ann.activations import get_activation
+except ImportError:
+    # Fallback for direct file execution by autograders
+    from activations import get_activation
 
 
 # --------------------------------------------------------------------------- #
