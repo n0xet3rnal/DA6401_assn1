@@ -12,7 +12,7 @@ A fully configurable, modular **Multi-Layer Perceptron** built with **NumPy only
 │   ├── ann/
 │   │   ├── activations.py        # sigmoid, tanh, relu, softmax
 │   │   ├── neural_layer.py       # DenseLayer (forward/backward, grad_W, grad_b)
-│   │   ├── neural_network.py     # MLP class (forward/backward/predict/save/load)
+│   │   ├── neural_network.py     # NeuralNetwork class (forward/backward/predict/save/load)
 │   │   ├── objective_functions.py# cross_entropy & mse losses + gradients
 │   │   └── optimizers.py         # SGD, Momentum, NAG, RMSProp, Adam, Nadam
 │   ├── utils/

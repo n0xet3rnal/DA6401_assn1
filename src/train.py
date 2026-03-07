@@ -15,7 +15,7 @@ matplotlib.use("Agg")
 # Allow running as: python src/train.py or python train.py from the src/ dir
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-from ann.neural_network import NeuralNetwork, MLP
+from ann.neural_network import NeuralNetwork
 from ann.optimizers import get_optimizer
 from utils.data_loader import load_data, one_hot
 from utils.metrics import accuracy, precision_recall_f1
@@ -25,7 +25,7 @@ def parse_arguments(args=None):
     """
     Parse command-line arguments.
 
-    Mandatory flags (grader-required short forms):
+    Mandatory flags :
       -d  / --dataset         'mnist' or 'fashion_mnist'
       -e  / --epochs          Number of training epochs
       -b  / --batch_size      Mini-batch size
@@ -39,7 +39,7 @@ def parse_arguments(args=None):
       -w_i/ --weight_init     'random' | 'xavier'
     """
     p = argparse.ArgumentParser(
-        description="Train a configurable NumPy MLP on MNIST or Fashion-MNIST."
+        description="Train a configurable NumPy NeuralNetwork on MNIST or Fashion-MNIST."
     )
     p.add_argument("-d",   "--dataset",       type=str,   default="mnist",
                    choices=["mnist", "fashion_mnist"], help="Dataset.")
@@ -98,7 +98,7 @@ def build_layer_sizes(input_dim, num_layers, hidden_sizes, output_dim):
 def main():
     """
     Main training function.
-    Trains the MLP, logs to W&B, saves the best checkpoint by val accuracy.
+    Trains the NeuralNetwork, logs to W&B, saves the best checkpoint by val accuracy.
     """
     args = parse_arguments()
     os.makedirs(os.path.dirname(args.save_path) or ".", exist_ok=True)

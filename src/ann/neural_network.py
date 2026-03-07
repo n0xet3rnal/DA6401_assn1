@@ -11,13 +11,12 @@ from .objective_functions import get_loss
 
 class NeuralNetwork:
     """
-    Configurable Multi-Layer Perceptron (MLP) built exclusively with NumPy.
+    Configurable NeuralNetwork built exclusively with NumPy.
 
     Accepts either a parsed CLI args namespace (from train.py) or explicit
     keyword arguments when instantiated directly.
 
-    Grader-required interface
-    -------------------------
+       -------------------------
     * forward(X)         — returns softmax probabilities, shape (b, n_classes)
     * backward(y_true, y_pred)
                          — computes gradients; stores self.grad_W and self.grad_b
@@ -301,7 +300,3 @@ class NeuralNetwork:
     def __repr__(self):
         layers_str = " → ".join(repr(l) for l in self.layers)
         return f"NeuralNetwork([{layers_str}], loss={self.loss_name})"
-
-
-# Alias for backward compatibility with RAW code and tests
-MLP = NeuralNetwork

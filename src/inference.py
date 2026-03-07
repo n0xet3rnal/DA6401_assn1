@@ -14,7 +14,7 @@ matplotlib.use("Agg")
 # Allow running as: python src/inference.py or python inference.py
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-from ann.neural_network import NeuralNetwork, MLP
+from ann.neural_network import NeuralNetwork
 from utils.data_loader import load_data
 from utils.metrics import accuracy, precision_recall_f1, compute_confusion_matrix
 from utils.visualize import plot_confusion_matrix
@@ -77,7 +77,7 @@ def evaluate_model(model: NeuralNetwork, X_test: np.ndarray, y_test: np.ndarray)
     met  = precision_recall_f1(np.argmax(y_test, axis=1), y_pred)
 
     return {
-        "logits":    probs,   # strictly probs, but commonly alias for raw output here
+        "logits":    probs,   # strictly probs
         "loss":      loss,
         "accuracy":  acc,
         "precision": met["precision"],
@@ -106,8 +106,7 @@ def main():
     results = evaluate_model(model, X_test, Y_test)
 
     # Note: accuracy, precision, recall, f1 use sparse integer labels
-    # but our evaluate_model extracted the predictions using argmax.
-    # We recompute using strictly the sparse labels to match assignment spec
+
     y_pred = np.argmax(results["logits"], axis=1)
     acc = accuracy(y_test, y_pred)
     met = precision_recall_f1(y_test, y_pred)
