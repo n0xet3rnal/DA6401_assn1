@@ -131,14 +131,14 @@ class NeuralNetwork:
     def forward(self, X: np.ndarray) -> np.ndarray:
         """
         Forward propagation through all layers.
-        Returns logits passed through softmax — shape (b, n_classes).
+        Returns logits — shape (b, n_classes).
         X is shape (b, D_in).
         """
         out = X
         for layer in self.layers:
             out = layer.forward(out)
         self.probs = softmax(out)
-        return self.probs
+        return out
 
     def backward(self, y_true: np.ndarray, y_pred: np.ndarray = None) -> tuple:
         """
@@ -198,7 +198,8 @@ class NeuralNetwork:
 
     def predict_proba(self, X: np.ndarray) -> np.ndarray:
         """Return softmax probability matrix."""
-        return self.forward(X)
+        self.forward(X)
+        return self.probs
 
     def update_weights(self):
         """Placeholder — weight updates are handled externally by optimizers."""
@@ -301,9 +302,11 @@ class NeuralNetwork:
         for k, idx in enumerate(indices):
             i, j = np.unravel_index(idx, layer.W.shape)
             layer.W[i, j] += eps
-            lp = self.loss_fn(self.forward(X), y_true)
+            self.predict_proba(X)
+            lp = self.compute_loss(y_true)
             layer.W[i, j] -= 2 * eps
-            lm = self.loss_fn(self.forward(X), y_true)
+            self.predict_proba(X)
+            lm = self.compute_loss(y_true)
             layer.W[i, j] += eps          # restore
             numeric[k] = (lp - lm) / (2 * eps)
 
