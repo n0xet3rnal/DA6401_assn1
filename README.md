@@ -81,7 +81,7 @@ wandb sweep sweep_config.yaml
 ```
 2. **Start the Agent:** W&B will output a sweep ID. Run the following command to start searching:
 ```bash
-wandb agent <USERNAME>/<PROJECT>/<SWEEP_ID>
+wandb agent [USERNAME]/[PROJECT]/[SWEEP_ID]
 ```
 
 ##  Outputs & Checkpoints
