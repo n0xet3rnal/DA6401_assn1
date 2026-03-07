@@ -175,7 +175,10 @@ class NeuralNetwork:
             grad_W_list.append(layer.grad_W)
             grad_b_list.append(layer.grad_b)
 
-        # Store as object arrays — index 0 = last (output) layer
+        # Reverse to store as object arrays — index 0 = first (input) layer
+        grad_W_list.reverse()
+        grad_b_list.reverse()
+
         self.grad_W = np.empty(len(grad_W_list), dtype=object)
         self.grad_b = np.empty(len(grad_b_list), dtype=object)
         for i, (gw, gb) in enumerate(zip(grad_W_list, grad_b_list)):
@@ -256,6 +259,14 @@ class NeuralNetwork:
     @classmethod
     def load(cls, weights_path: str, config_path: str) -> "NeuralNetwork":
         """Load a saved model from .npy weights and a JSON config file."""
+        import os
+        if not os.path.exists(weights_path):
+            alt_w = weights_path.replace("src/", "models/")
+            if os.path.exists(alt_w): weights_path = alt_w
+        if not os.path.exists(config_path):
+            alt_c = config_path.replace("src/", "models/")
+            if os.path.exists(alt_c): config_path = alt_c
+
         with open(config_path, "r") as f:
             cfg = json.load(f)
 

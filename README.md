@@ -42,9 +42,9 @@ python src/train.py -d mnist -e 10 -b 32 -l cross_entropy \
 
 ### 3. Inference
 ```bash
-python src/inference.py --model models/best_model.npy \
-                        --config models/best_config.json \
-                        -d mnist --plot_cm
+python src/inference.py --model src/best_model.npy \
+                        --config src/best_config.json \
+                        --dataset mnist --plot_cm
 ```
 
 ## CLI Arguments
@@ -65,10 +65,10 @@ python src/inference.py --model models/best_model.npy \
 
 ## Outputs
 
-After training, you will find:
-- `models/best_model.npy` — serialised weights (best val accuracy)
-- `models/best_config.json` — matching hyperparameter config
+Standard training generates:
+- `src/best_model.npy` — serialised weights (best val accuracy)
+- `src/best_config.json` — matching hyperparameter config
+- `models/` (if specified via `--save_path` and `--config_path` in arguments) 
 
 ## WandB Report
-[Report Link](https://wandb.ai/be22b022-indian-institute-of-technology-madras/da6401_assignment1/reports/DA6401-Assignment-1-BE22B022--VmlldzoxNjA1MTgwNg?accessToken=toja56uklr2mc9mpz97ehsxeqb422384631ril7cacdajnz0qy36lezc6d5znc46)
-
+[Report Link](https://wandb.ai/be22b022-indian-institute-of-technology-madras/da6401_assignment1/reports/DA6401-Assignment-1-BE22B022--VmlldzoxNjA1MTgwNg?accessToken=toja56uklr2mc9mpz97ehsxeqb422384631ril6cacdajnz0qy36lezc6d5znc46)

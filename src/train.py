@@ -76,9 +76,9 @@ def parse_arguments(args=None):
                    help="W&B entity (team) name.")
     p.add_argument("--no_wandb",       action="store_true",
                    help="Disable Weights & Biases logging.")
-    p.add_argument("--save_path",   type=str, default="models/best_model.npy",
+    p.add_argument("--save_path",   type=str, default="src/best_model.npy",
                    help="Relative path to save model weights.")
-    p.add_argument("--config_path", type=str, default="models/best_config.json",
+    p.add_argument("--config_path", type=str, default="src/best_config.json",
                    help="Relative path to save model config JSON.")
 
     if args is None and len(sys.argv) <= 1:
