@@ -165,25 +165,14 @@ class NeuralNetwork:
             dot = np.sum(grad_probs * p, axis=1, keepdims=True)
             grad_logits = p * (grad_probs - dot)
 
-        # Backprop through layers in reverse; accumulate in reversed order
-        grad_W_list = []
-        grad_b_list = []
-
+        # Backprop through layers in reverse
         grad = grad_logits
         for layer in reversed(self.layers):
             grad = layer.backward(grad)
-            grad_W_list.append(layer.grad_W)
-            grad_b_list.append(layer.grad_b)
 
-        # Reverse to store as object arrays — index 0 = first (input) layer
-        grad_W_list.reverse()
-        grad_b_list.reverse()
-
-        self.grad_W = np.empty(len(grad_W_list), dtype=object)
-        self.grad_b = np.empty(len(grad_b_list), dtype=object)
-        for i, (gw, gb) in enumerate(zip(grad_W_list, grad_b_list)):
-            self.grad_W[i] = gw
-            self.grad_b[i] = gb
+        # Gather gradients (index 0 = first layer)
+        self.grad_W = [layer.grad_W for layer in self.layers]
+        self.grad_b = [layer.grad_b for layer in self.layers]
 
         return self.grad_W, self.grad_b
 

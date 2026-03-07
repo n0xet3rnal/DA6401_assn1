@@ -76,10 +76,10 @@ def parse_arguments(args=None):
                    help="W&B entity (team) name.")
     p.add_argument("--no_wandb",       action="store_true",
                    help="Disable Weights & Biases logging.")
-    p.add_argument("--save_path",   type=str, default="src/best_model.npy",
-                   help="Relative path to save model weights.")
-    p.add_argument("--config_path", type=str, default="src/best_config.json",
-                   help="Relative path to save model config JSON.")
+    p.add_argument("--save_path",   type=str, default=os.path.join(src_dir, "best_model.npy"),
+                   help="Absolute path to save model weights.")
+    p.add_argument("--config_path", type=str, default=os.path.join(src_dir, "best_config.json"),
+                   help="Absolute path to save model config JSON.")
 
     if args is None and len(sys.argv) <= 1:
         # Prevent crash in unit-test suites that import train.py without args

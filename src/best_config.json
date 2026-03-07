@@ -1,0 +1,23 @@
+{
+  "layer_sizes": [
+    784,
+    128,
+    128,
+    128,
+    10
+  ],
+  "activations": [
+    "relu",
+    "relu",
+    "relu"
+  ],
+  "weight_init": "xavier",
+  "loss": "cross_entropy",
+  "dataset": "mnist",
+  "optimizer": "adam",
+  "learning_rate": 0.001,
+  "weight_decay": 0.0,
+  "batch_size": 32,
+  "epochs": 1,
+  "best_val_accuracy": 0.9646666666666667
+}
