@@ -161,13 +161,13 @@ def main():
     # Training loop
     # ------------------------------------------------------------------ #
     best_val_acc = -1.0
-    # Only resume global best if we are running as part of a W&B sweep!
-    if "WANDB_SWEEP_ID" in os.environ and os.path.exists(args.config_path):
+    # Always resume global best so that test scripts don't overwrite our absolute best model
+    if os.path.exists(args.config_path):
         try:
             with open(args.config_path, "r") as f:
                 old_cfg = json.load(f)
                 best_val_acc = old_cfg.get("best_val_accuracy", -1.0)
-                print(f"Sweep run: Resuming with global best_val_accuracy: {best_val_acc:.4f}")
+                print(f"Resuming with global best_val_accuracy: {best_val_acc:.4f}")
         except Exception as e:
             print(f"Warning: Could not read existing config to get best accuracy. Starting from -1.0 ({e})")
 
