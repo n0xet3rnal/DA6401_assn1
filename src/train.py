@@ -157,6 +157,15 @@ def main():
     # Training loop
     # ------------------------------------------------------------------ #
     best_val_acc = -1.0
+    if os.path.exists(args.config_path):
+        try:
+            with open(args.config_path, "r") as f:
+                old_cfg = json.load(f)
+                best_val_acc = old_cfg.get("best_val_accuracy", -1.0)
+                print(f"Resuming with global best_val_accuracy: {best_val_acc:.4f}")
+        except Exception as e:
+            print(f"Warning: Could not read existing config to get best accuracy. Starting from -1.0 ({e})")
+
     n_train   = X_train.shape[0]
     n_batches = int(np.ceil(n_train / args.batch_size))
 
